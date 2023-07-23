@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: financialServices cicd flow
+name: recipe manager cicd flow
 
 on:
   push:
