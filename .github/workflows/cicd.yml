@@ -29,5 +29,22 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn clean install
+    - name: Login to image repository
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        registry: docker.io
+    - name: Build & push Docker image
+      uses: docker/build-push-action@v1
+      with:
+        image: recipe-manager
+        tags: v1.0
+        registry: docker.io
+        dockerfile: Dockerfile
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
 
    
