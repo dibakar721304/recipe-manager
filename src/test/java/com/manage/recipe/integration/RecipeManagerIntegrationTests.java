@@ -1,52 +1,89 @@
 package com.manage.recipe.integration;
 
+import com.manage.recipe.RecipeManagerApplication;
+import com.manage.recipe.model.FoodCategory;
+import com.manage.recipe.model.dao.IngredientDAO;
+import com.manage.recipe.model.dao.RecipeDAO;
 import com.manage.recipe.model.dto.RecipeDTO;
+import com.manage.recipe.model.dto.RecipeResponseDTO;
 import java.util.Arrays;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import javax.sql.DataSource;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = RecipeManagerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@TestPropertySource(properties = {"recipe.host.url=http://localhost", "recipe.context.path=/recipes"})
 class RecipeManagerIntegrationTests {
 
     @LocalServerPort
     private int port;
 
-    private String baseUrl = "http://localhost";
+    @Value("${recipe.host.url}")
+    private String baseUrl;
 
-    private static RestTemplate restTemplate;
-    private static String ADD_END_POINT = "/add";
+    @Value("${recipe.context.path}")
+    private String context;
+
+    @Autowired
+    DataSource dataSource;
+
+    private static TestRestTemplate testRestTemplate;
 
     @Autowired
     private RecipeManagerTestRepository recipeManagerTestRepository;
 
     @BeforeAll
     public static void init() {
-        restTemplate = new RestTemplate();
+        testRestTemplate = new TestRestTemplate();
     }
 
     @BeforeEach
     public void setUp() {
-        baseUrl = baseUrl.concat(":").concat(port + "").concat("/recipes");
+        System.out.println("datasource" + dataSource);
+        baseUrl = baseUrl.concat(":").concat(port + "").concat(context);
+        RecipeDAO recipeDAO = RecipeDAO.builder()
+                .name("recipe1")
+                .ingredients(Arrays.asList(
+                        IngredientDAO.builder().ingredientName("ingredient1").build(),
+                        IngredientDAO.builder().ingredientName("ingredient2").build()))
+                .instructions("instruction1")
+                .foodCategory(FoodCategory.VEG)
+                .servings(1)
+                .build();
+        recipeManagerTestRepository.save(recipeDAO);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        recipeManagerTestRepository.deleteAll();
     }
 
     @Test
-    public void testAddProduct() {
+    public void testAddRecipe() {
         RecipeDTO recipeDTO = RecipeDTO.builder()
-                .ingredients(Arrays.asList("salt", "pepper"))
+                .ingredients(Arrays.asList(
+                        IngredientDAO.builder().ingredientName("salt").build(),
+                        IngredientDAO.builder().ingredientName("sugar").build()))
                 .name("testRecipe")
-                .isVegetarian(true)
+                .foodCategory(FoodCategory.VEG)
                 .servings(1)
                 .instructions("Test instruction for recipe")
                 .build();
-        RecipeDTO response = restTemplate.postForObject(baseUrl + ADD_END_POINT, recipeDTO, RecipeDTO.class);
+        RecipeDTO response = testRestTemplate.postForObject(baseUrl, recipeDTO, RecipeDTO.class);
         assert response != null;
         Assertions.assertEquals("testRecipe", response.getName());
-        Assertions.assertEquals(1, recipeManagerTestRepository.findAll().size());
+    }
+
+    @Test
+    public void testFetchAllRecipes() {
+        RecipeResponseDTO response = testRestTemplate.getForObject(baseUrl, RecipeResponseDTO.class);
+        Assertions.assertEquals(1, response.getRecipeDTOList().size());
     }
 }

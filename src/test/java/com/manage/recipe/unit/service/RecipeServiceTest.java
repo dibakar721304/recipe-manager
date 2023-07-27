@@ -5,13 +5,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.manage.recipe.exception.InvalidRecipeRequestException;
+import com.manage.recipe.exception.RecipeNotFoundException;
+import com.manage.recipe.model.FoodCategory;
+import com.manage.recipe.model.dao.IngredientDAO;
 import com.manage.recipe.model.dao.RecipeDAO;
 import com.manage.recipe.model.dto.RecipeDTO;
+import com.manage.recipe.model.dto.RecipeResponseDTO;
 import com.manage.recipe.repository.RecipeRepository;
 import com.manage.recipe.service.RecipeService;
 import com.manage.recipe.util.RecipeModelMapper;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +34,7 @@ public class RecipeServiceTest {
 
     private RecipeDTO recipeDTO;
     private RecipeDAO recipeDAO;
+    private List<RecipeDTO> recipeDTOList;
 
     @Mock
     RecipeModelMapper recipeModelMapper;
@@ -38,9 +42,11 @@ public class RecipeServiceTest {
     @BeforeEach
     public void setUp() {
         recipeDTO = RecipeDTO.builder()
-                .ingredients(Arrays.asList("salt", "pepper"))
+                .ingredients(Arrays.asList(
+                        IngredientDAO.builder().ingredientName("ingredient1").build(),
+                        IngredientDAO.builder().ingredientName("ingredient2").build()))
                 .name("testRecipe")
-                .isVegetarian(true)
+                .foodCategory(FoodCategory.VEG)
                 .servings(1)
                 .instructions("Test instruction for recipe")
                 .build();
@@ -80,5 +86,29 @@ public class RecipeServiceTest {
         Exception exception =
                 assertThrows(InvalidRecipeRequestException.class, () -> recipeService.addNewRecipe(recipeDTO));
         Assertions.assertTrue(exception.getMessage().contains("Recipe name already exists"));
+    }
+
+    @Test
+    public void test_fetch_all_recipies_success() {
+        recipeDTOList = new ArrayList<>();
+        recipeDTOList.add(recipeDTO);
+        List<RecipeDAO> recipeDAOList = new ArrayList<>();
+        recipeDAOList.add(RecipeDAO.builder().build());
+        when(recipeModelMapper.mapToRecipeDTOlist(anyList()))
+                .thenReturn(
+                        RecipeResponseDTO.builder().recipeDTOList(recipeDTOList).build());
+        when(recipeRepository.findAll()).thenReturn(recipeDAOList);
+        RecipeResponseDTO recipeDTOListResponse = recipeService.fetchAllRecipes();
+        Assertions.assertNotNull(recipeDTOListResponse);
+        Assertions.assertEquals(
+                recipeDAOList.size(), recipeDTOListResponse.getRecipeDTOList().size());
+        verify(recipeRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void test_fetch_all_recipies_not_found() {
+        when(recipeRepository.findAll()).thenReturn(Collections.emptyList());
+        Exception exception = assertThrows(RecipeNotFoundException.class, () -> recipeService.fetchAllRecipes());
+        Assertions.assertTrue(exception.getMessage().contains("There are no recipes"));
     }
 }
