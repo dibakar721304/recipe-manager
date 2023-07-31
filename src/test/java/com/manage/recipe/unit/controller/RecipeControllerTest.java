@@ -13,6 +13,7 @@ import com.manage.recipe.exception.RecipeNotFoundException;
 import com.manage.recipe.model.FoodCategory;
 import com.manage.recipe.model.dao.IngredientDAO;
 import com.manage.recipe.model.dto.RecipeDTO;
+import com.manage.recipe.model.dto.RecipeFilterSearchDTO;
 import com.manage.recipe.model.dto.RecipeResponseDTO;
 import com.manage.recipe.service.RecipeService;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -192,5 +194,15 @@ public class RecipeControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(recipeService).removeRecipe(anyLong());
+    }
+
+    @Test
+    public void test_search_recipe_by_food_category() throws Exception {
+        RecipeResponseDTO recipeResponseDTO = RecipeResponseDTO.builder().build();
+        when(recipeService.searchRecipes(any(RecipeFilterSearchDTO.class), any(PageRequest.class)))
+                .thenReturn(recipeResponseDTO);
+        mockMvc.perform(MockMvcRequestBuilders.get(RECIPE_END_POINT + "/search").param("foodCategory", "VEG"))
+                .andExpect(status().isOk());
+        verify(recipeService).searchRecipes(any(RecipeFilterSearchDTO.class), any(PageRequest.class));
     }
 }

@@ -64,6 +64,11 @@ In this way it is easy to add any other field to display as output along with re
 all DTO requests are converted to DAO to before saving to database and DAO are converted to DTOs for presentation layer. In this way we will have more control
 over the input and output fields.
 
+## cicd details
+
+The cicd file is created using github action. This file is responsible for building creating, and pushing docker image
+to docker hub. At present, this is only done for master branch.
+
 # Reference/Guides
 
 1) To format the application:  mvn spotless::apply
@@ -72,10 +77,11 @@ over the input and output fields.
 3) To run application : mvn spring-boot:run
 4) To Swagger ui: http://localhost:8080/swagger-ui/index.html
 5) For docker :
-build :
+local build :
 docker build -t dibakar721304/recipe-manager:v1.0 .
 push:
 docker push dibakar721304/recipe-manager:v1.0
+To pull from docker hub : docker pull dibakar721304/recipe-manager:v1.0
 
 6) The high level design is in ..recipe-manager/design-uml-diagrams/High-level-design.jpg
 
