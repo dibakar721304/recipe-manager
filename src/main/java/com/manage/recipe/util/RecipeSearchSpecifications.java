@@ -19,12 +19,29 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RecipeSearchSpecifications {
+    private static final String NAME = "name";
+
     private static final String FOOD_CATEGORY = "foodCategory";
     private static final String SERVINGS_NUMBER = "servings";
     private static final String INGREDIENTS = "ingredients";
     private static final String INGREDIENT_NAME = "ingredientName";
     private static final String INSTRUCTIONS = "instructions";
     private static final String RECIPE_ID = "id";
+    /**
+     * This method checks if a specified food category exists or not
+     * @author AnantDibakar
+     * @date 30/07/2023
+     * @param    name, example: VEG,UNKOWN
+     * @return A specification object if found or else returns null
+     */
+    public Specification<RecipeDAO> hasRecipeName(String name) {
+        return (recipeDAOroot, query, criteriaBuilder) -> {
+            if (name == null) {
+                return null;
+            }
+            return criteriaBuilder.equal(recipeDAOroot.get(NAME), name);
+        };
+    }
     /**
      * This method checks if a specified food category exists or not
      * @author AnantDibakar
@@ -118,7 +135,9 @@ public class RecipeSearchSpecifications {
      * @return A specification object
      */
     public Specification<RecipeDAO> getRecipeSearchSpecification(RecipeFilterSearchDTO recipeFilterSearchDTO) {
-        return Specification.where(hasFoodCategory(recipeFilterSearchDTO.getFoodCategoryEnum()))
+        return Specification.where(hasRecipeName(recipeFilterSearchDTO.getName()))
+                .and(hasFoodCategory(
+                        recipeFilterSearchDTO.getFoodCategoryEnum(recipeFilterSearchDTO.getFoodCategory())))
                 .and(hasServings(recipeFilterSearchDTO.getServings()))
                 .and(hasIncludeIngredients(recipeFilterSearchDTO.getIncludedIngredients()))
                 .and(hasExcludeIngredients(recipeFilterSearchDTO.getExcludedIngredients()))

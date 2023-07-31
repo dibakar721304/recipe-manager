@@ -1,8 +1,8 @@
 package com.manage.recipe.unit.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(controllers = RecipeController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc()
 @ExtendWith(MockitoExtension.class)
 public class RecipeControllerTest {
     @Autowired
@@ -47,6 +47,9 @@ public class RecipeControllerTest {
     private List<RecipeDTO> recipeDTOList;
 
     private static final String RECIPE_END_POINT = "/recipes";
+    private static final String RECIPE_ID = "/id/";
+    private static final String UPDATE = "/update/";
+    private static final String DELETE = "/delete/";
 
     @BeforeEach
     public void setup() {
@@ -126,5 +129,68 @@ public class RecipeControllerTest {
         when(recipeService.fetchAllRecipes()).thenThrow(new RecipeNotFoundException("There are no recipes"));
         mockMvc.perform(MockMvcRequestBuilders.get(RECIPE_END_POINT)).andExpect(status().isNotFound());
         verify(recipeService).fetchAllRecipes();
+    }
+
+    @Test
+    public void test_fetch_recipe_by_id_success() throws Exception {
+        when(recipeService.fetchRecipeById(anyLong())).thenReturn(recipeDTO);
+        mockMvc.perform(MockMvcRequestBuilders.get(RECIPE_END_POINT + RECIPE_ID + 1L))
+                .andExpect(status().isOk());
+        verify(recipeService).fetchRecipeById(anyLong());
+    }
+
+    @Test
+    public void test_fetch_recipe_by_bad_request() throws Exception {
+        when(recipeService.fetchRecipeById(anyLong())).thenThrow(new RecipeNotFoundException("Recipe not found"));
+        mockMvc.perform(MockMvcRequestBuilders.get(RECIPE_END_POINT + RECIPE_ID + 1L))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Recipe not found"));
+        verify(recipeService).fetchRecipeById(anyLong());
+    }
+
+    @Test
+    public void test_update_recipe_by_id_success() throws Exception {
+        recipeDTO.setName("updatedRecipeName");
+        when(recipeService.updateRecipe(anyLong(), any())).thenReturn(recipeDTO);
+        mockMvc.perform(MockMvcRequestBuilders.put(RECIPE_END_POINT + UPDATE + 1L, recipeDTO)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(recipeDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("updatedRecipeName"));
+        verify(recipeService).updateRecipe(anyLong(), any());
+    }
+
+    @Test
+    public void test_update_recipe_by_invalid_id_bad_request() throws Exception {
+        recipeDTO.setName("updatedRecipeName");
+        when(recipeService.updateRecipe(anyLong(), any())).thenThrow(new RecipeNotFoundException("Recipe not found"));
+        mockMvc.perform(MockMvcRequestBuilders.put(RECIPE_END_POINT + UPDATE + 2L, recipeDTO)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(recipeDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Recipe not found"));
+        verify(recipeService).updateRecipe(anyLong(), any());
+    }
+
+    @Test
+    public void test_delete_recipe_by_id_success() throws Exception {
+        doNothing().when(recipeService).removeRecipe(1L);
+        mockMvc.perform(MockMvcRequestBuilders.delete(RECIPE_END_POINT + DELETE + 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        verify(recipeService).removeRecipe(anyLong());
+    }
+
+    @Test
+    public void test_delete_recipe_by_id_bad_request() throws Exception {
+        doThrow(new RecipeNotFoundException("Recipe not found"))
+                .when(recipeService)
+                .removeRecipe(2L);
+        mockMvc.perform(MockMvcRequestBuilders.delete(RECIPE_END_POINT + DELETE + 2L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(recipeService).removeRecipe(anyLong());
     }
 }

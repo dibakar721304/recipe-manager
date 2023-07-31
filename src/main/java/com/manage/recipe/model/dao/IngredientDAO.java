@@ -18,7 +18,4 @@ public class IngredientDAO {
     private Long id;
 
     private String ingredientName;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private RecipeDAO recipe;
 }

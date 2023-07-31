@@ -96,7 +96,7 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/search")
     public ResponseEntity<RecipeResponseDTO> searchRecipes(
-            @RequestBody RecipeFilterSearchDTO searchDTO,
+            RecipeFilterSearchDTO searchDTO,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return new ResponseEntity<>(recipeService.searchRecipes(searchDTO, pageable), HttpStatus.OK);
     }

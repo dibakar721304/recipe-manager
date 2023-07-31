@@ -13,14 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RecipeFilterSearchDTO {
     private String name;
-    // private Boolean vegetarian;
     private String foodCategory;
     private Integer servings;
     private List<String> includedIngredients;
     private List<String> excludedIngredients;
     private String searchTextInInstructions;
 
-    public FoodCategory getFoodCategoryEnum() {
+    public FoodCategory getFoodCategoryEnum(String veg) {
         try {
             return FoodCategory.valueOf(foodCategory.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException ex) {

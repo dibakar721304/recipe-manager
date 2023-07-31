@@ -34,7 +34,6 @@ public class RecipeServiceTest {
 
     private RecipeDTO recipeDTO;
     private RecipeDAO recipeDAO;
-    private List<RecipeDTO> recipeDTOList;
 
     @Mock
     RecipeModelMapper recipeModelMapper;
@@ -90,7 +89,7 @@ public class RecipeServiceTest {
 
     @Test
     public void test_fetch_all_recipies_success() {
-        recipeDTOList = new ArrayList<>();
+        List<RecipeDTO> recipeDTOList = new ArrayList<>();
         recipeDTOList.add(recipeDTO);
         List<RecipeDAO> recipeDAOList = new ArrayList<>();
         recipeDAOList.add(RecipeDAO.builder().build());
