@@ -46,7 +46,7 @@ to increase compile-time checking and one extra type "UNKNOWN" is added for demo
 search for "VEG" recipes. An enum is well suited for food type/category since these are pre-defined constants and will not be of many types
 As per design, it is easy to add other food categories quite easily.
 An Ingredient object is created and embedded to Recipe DAO as List, This mapping is @OneToMany. Since there is
-not much focus on ingredient crud operations, the saving of this ingredient is handled via Recipe dao repository.
+not much focus on ingredient crud operations, no end points have been created for perforing crud on ingredient object.
 We could have had list of strings to store ingredients. This can also be done via creating list of Ingredients object, this option levarages
 with having future requirements such as ingredient quantity, category etc. So it is easily scalable.
 
@@ -82,14 +82,16 @@ docker build -t dibakar721304/recipe-manager:v1.0 .
 push:
 docker push dibakar721304/recipe-manager:v1.0
 To pull from docker hub : docker pull dibakar721304/recipe-manager:v1.0
-
+To running docker image:  docker run -p 8080:8080 dibakar721304/recipe-manager:v1.0
 6) The high level design is in ..recipe-manager/design-uml-diagrams/High-level-design.jpg
 
 # End points usage:
 
 via postman:
 1) POST http://localhost:8080/recipes
+
 Request body:
+
 {
 "name":"testRecipe",
 "foodCategory": "VEG",
@@ -103,9 +105,10 @@ Request body:
 "ingredientName": "sugar"
 }],
 "instructions":"Test instruction for  recipe"
-
 }
+
 2) GET http://localhost:8080/recipes
+
 3) PUT http://localhost:8080/recipes/update/1
 Request body:
 {
@@ -121,8 +124,9 @@ Request body:
 "ingredientName": "sugar3"
 }],
 "instructions":"updated instruction for recipe5"
-
 }
 4) GET http://localhost:8080/recipes/id/1
+
 5) DELETE http://localhost:8080/recipes/delete/1
+
 6) GET http://localhost:8080/recipes/search?foodCategory=VEG&servings=4&includedIngredients=pepper&excludedIngredients=pepper&searchTextInInstructions=stir&name=testRecipe

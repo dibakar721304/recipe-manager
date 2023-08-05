@@ -9,6 +9,8 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RecipeSearchSpecifications {
+    private static final Logger logger = LoggerFactory.getLogger(RecipeSearchSpecifications.class);
     private static final String NAME = "name";
 
     private static final String FOOD_CATEGORY = "foodCategory";
@@ -123,7 +126,8 @@ public class RecipeSearchSpecifications {
             if (searchText == null || searchText.trim().isEmpty()) {
                 return null;
             }
-            return criteriaBuilder.like(recipeDAOroot.get(INSTRUCTIONS), "%" + searchText + "%");
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(recipeDAOroot.get(INSTRUCTIONS)), "%" + searchText.toLowerCase() + "%");
         };
     }
     /**
@@ -135,6 +139,7 @@ public class RecipeSearchSpecifications {
      * @return A specification object
      */
     public Specification<RecipeDAO> getRecipeSearchSpecification(RecipeFilterSearchDTO recipeFilterSearchDTO) {
+        logger.debug("Search has been initiated with request {}", recipeFilterSearchDTO);
         return Specification.where(hasRecipeName(recipeFilterSearchDTO.getName()))
                 .and(hasFoodCategory(
                         recipeFilterSearchDTO.getFoodCategoryEnum(recipeFilterSearchDTO.getFoodCategory())))

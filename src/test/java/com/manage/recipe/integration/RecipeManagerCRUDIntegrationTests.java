@@ -93,7 +93,7 @@ class RecipeManagerCRUDIntegrationTests {
     public void testThrowExceptionWhenRecipesAreNotPresent() {
         recipeManagerTestRepository.deleteAll();
         var response = testRestTemplate.getForObject(baseUrl, RecipeResponseDTO.class);
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        Assertions.assertEquals(404, response.getStatus());
     }
 
     @Test
@@ -147,8 +147,6 @@ class RecipeManagerCRUDIntegrationTests {
 
     @Test
     public void testDeleteRecipe() {
-        //        List <RecipeDAO> recipeDAOList=recipeManagerTestRepository.findAll();
-        //        recipeDAO=recipeDAOList.get(0);
         var putResponseEntity = testRestTemplate.exchange(
                 baseUrl + "/delete/" + recipeDAO.getId(), HttpMethod.DELETE, null, Void.class);
 

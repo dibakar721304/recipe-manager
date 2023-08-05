@@ -40,7 +40,7 @@ public class RecipeModelMapper {
     public RecipeResponseDTO mapToRecipeDTOlist(List<RecipeDAO> recipeDAOList) {
         return RecipeResponseDTO.builder()
                 .recipeDTOList(recipeDAOList.stream().map(this::mapToRecipeDTO).collect(Collectors.toList()))
-                .status(HttpStatus.OK)
+                .status(HttpStatus.OK.value())
                 .build();
     }
 
@@ -49,7 +49,6 @@ public class RecipeModelMapper {
         recipeDAO.setIngredients(recipeDTO.getIngredients());
         recipeDAO.setServings(recipeDTO.getServings());
         recipeDAO.setInstructions(recipeDTO.getInstructions());
-        // recipeDAO.setVegetarian(recipeDTO.isVegetarian());
         recipeDAO.setFoodCategory(recipeDTO.getFoodCategory());
         return recipeDAO;
     }

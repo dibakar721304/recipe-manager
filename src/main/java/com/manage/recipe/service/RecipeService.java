@@ -68,7 +68,7 @@ public class RecipeService {
      * @return RecipeResponseDTO object
      */
     public RecipeResponseDTO fetchAllRecipes() {
-        logger.debug("Fetching all recipes from database");
+        logger.info("Fetch request for all recipes");
         List<RecipeDAO> recipeDAOList = recipeRepository.findAll();
         if (recipeDAOList.size() == 0) {
             logger.error("There are no recipes");
@@ -129,7 +129,7 @@ public class RecipeService {
      * @return RecipeResponseDTO object
      */
     public RecipeResponseDTO searchRecipes(RecipeFilterSearchDTO filterDTO, Pageable pageable) {
-
+        logger.info("Search request initiated for recipe");
         Specification<RecipeDAO> searchSpecification =
                 recipeSearchSpecifications.getRecipeSearchSpecification(filterDTO);
         Page<RecipeDAO> page = recipeRepository.findAll(searchSpecification, pageable);

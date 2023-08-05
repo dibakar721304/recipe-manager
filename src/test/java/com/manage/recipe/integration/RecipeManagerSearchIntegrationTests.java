@@ -92,6 +92,7 @@ public class RecipeManagerSearchIntegrationTests {
                 baseUrl + SEARCH + QUESTION_MARK + FOOD_CATEGORY_SEARCH + EQUAL_CHARACTER + foodCategory,
                 RecipeResponseDTO.class,
                 recipeFilterSearchDTO);
+
         Assertions.assertEquals(1, response.getRecipeDTOList().size());
     }
 

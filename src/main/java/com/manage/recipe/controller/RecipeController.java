@@ -9,9 +9,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,15 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class RecipeController {
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
+
+    @Value("${recipe.page.pageSize:10}")
+    private int pageSize;
+
+    @Value("${recipe.page.sortDirection:DESC}")
+    private String sortDirection;
+
+    @Value("${recipe.page.defaultSort:id}")
+    private String defaultSort;
 
     private final RecipeService recipeService;
 
@@ -85,19 +95,20 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @DeleteMapping(value = "/delete/{recipeId}")
     public ResponseEntity<Void> removeRecipe(@PathVariable Long recipeId) {
-        logger.debug("Removing recipe with id {}", recipeId);
+        logger.warn("Removing recipe with id {}", recipeId);
         recipeService.removeRecipe(recipeId);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Filter recipes")
+    @Operation(summary = "Search recipes")
     @ApiResponse(responseCode = "204", description = "Recipes returned")
     @ApiResponse(responseCode = "404", description = "Recipe not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/search")
     public ResponseEntity<RecipeResponseDTO> searchRecipes(
-            RecipeFilterSearchDTO searchDTO,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return new ResponseEntity<>(recipeService.searchRecipes(searchDTO, pageable), HttpStatus.OK);
+            RecipeFilterSearchDTO recipeFilterSearchDTO, @RequestParam(required = false, defaultValue = "0") int page) {
+        logger.debug("Recipe search request {}", recipeFilterSearchDTO);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(sortDirection), defaultSort);
+        return new ResponseEntity<>(recipeService.searchRecipes(recipeFilterSearchDTO, pageable), HttpStatus.OK);
     }
 }

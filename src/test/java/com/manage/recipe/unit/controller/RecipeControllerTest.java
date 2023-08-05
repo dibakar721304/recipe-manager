@@ -91,7 +91,7 @@ public class RecipeControllerTest {
                 .thenThrow(new InvalidRecipeRequestException("Recipe name can not be null or empty"));
         mockMvc.perform(getRequestBuilder())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Recipe name can not be null or empty"));
         verify(recipeService).addNewRecipe(any(RecipeDTO.class));
     }
@@ -103,7 +103,7 @@ public class RecipeControllerTest {
                 .thenThrow(new InvalidRecipeRequestException("Recipe name already exists"));
         mockMvc.perform(getRequestBuilder())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Recipe name already exists"));
         verify(recipeService).addNewRecipe(any(RecipeDTO.class));
     }
