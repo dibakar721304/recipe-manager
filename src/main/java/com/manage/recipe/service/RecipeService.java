@@ -48,7 +48,7 @@ public class RecipeService {
      * @return RecipeDTO object
      */
     public RecipeDTO addNewRecipe(RecipeDTO recipeDTO) {
-        logger.debug("Saving recipe object to database");
+        logger.debug("Saving recipe object to database {}", recipeDTO);
         if (recipeDTO.getName() == null || recipeDTO.getName().isEmpty()) {
             logger.error("Recipe name can not be null or empty");
             throw new InvalidRecipeRequestException("Recipe name can not be null or empty");

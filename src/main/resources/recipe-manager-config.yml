@@ -1,5 +1,0 @@
-recipe:
-    page:
-      pageSize: 2
-      sortDirection: DESC
-      defaultSort: id

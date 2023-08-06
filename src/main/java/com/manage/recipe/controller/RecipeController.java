@@ -62,7 +62,7 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping
     public ResponseEntity<RecipeResponseDTO> fetchAllRecipes() {
-        logger.debug("Request for fetching all  recipes");
+        logger.info("Request for fetching all  recipes");
         RecipeResponseDTO allRecipes = recipeService.fetchAllRecipes();
         return new ResponseEntity<>(allRecipes, HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping(value = "/id/{recipeId}")
     public ResponseEntity<RecipeDTO> fetchRecipe(@PathVariable Long recipeId) {
-        logger.debug("Request for fetching  recipe");
+        logger.debug("Request for fetching  recipe with id {}", recipeId);
         RecipeDTO recipe = recipeService.fetchRecipeById(recipeId);
         return new ResponseEntity<>(recipe, HttpStatus.OK);
     }

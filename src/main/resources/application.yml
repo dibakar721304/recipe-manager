@@ -13,8 +13,14 @@ spring:
             enabled: true
     jpa:
         database-platform: org.hibernate.dialect.H2Dialect
-        show-sql: true
-
+logging:
+    level:
+        root: INFO
+recipe:
+    page:
+        pageSize: 15
+        sortDirection: DESC
+        defaultSort: id
 ---
 
 spring:
