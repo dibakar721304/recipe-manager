@@ -88,6 +88,7 @@ public class RecipeManagerSearchIntegrationTests {
     @Test
     public void shouldReturnAllVegetarianFoodList() {
         String foodCategory = "VEG";
+
         RecipeResponseDTO response = testRestTemplate.getForObject(
                 baseUrl + SEARCH + QUESTION_MARK + FOOD_CATEGORY_SEARCH + EQUAL_CHARACTER + foodCategory,
                 RecipeResponseDTO.class,

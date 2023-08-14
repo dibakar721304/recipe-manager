@@ -141,8 +141,7 @@ public class RecipeSearchSpecifications {
     public Specification<RecipeDAO> getRecipeSearchSpecification(RecipeFilterSearchDTO recipeFilterSearchDTO) {
         logger.debug("Search has been initiated with request {}", recipeFilterSearchDTO);
         return Specification.where(hasRecipeName(recipeFilterSearchDTO.getName()))
-                .and(hasFoodCategory(
-                        recipeFilterSearchDTO.getFoodCategoryEnum(recipeFilterSearchDTO.getFoodCategory())))
+                .and(hasFoodCategory(recipeFilterSearchDTO.getFoodCategoryEnum()))
                 .and(hasServings(recipeFilterSearchDTO.getServings()))
                 .and(hasIncludeIngredients(recipeFilterSearchDTO.getIncludedIngredients()))
                 .and(hasExcludeIngredients(recipeFilterSearchDTO.getExcludedIngredients()))
