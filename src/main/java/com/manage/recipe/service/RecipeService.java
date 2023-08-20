@@ -72,7 +72,7 @@ public class RecipeService {
         List<RecipeDAO> recipeDAOList = recipeRepository.findAll();
         if (recipeDAOList.size() == 0) {
             logger.error("There are no recipes");
-            throw new RecipeNotFoundException("There are no recipes");
+            throw new RecipeNotFoundException("There are no recipes found");
         }
         return recipeModelMapper.mapToRecipeDTOlist(recipeDAOList);
     }
