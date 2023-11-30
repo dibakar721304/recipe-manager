@@ -6,8 +6,7 @@ import com.manage.recipe.model.dto.ErrorResponseDTO;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,13 +19,13 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
+@Slf4j
 public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(RecipeManagerExceptionHandler.class);
 
     @ExceptionHandler(InvalidRecipeRequestException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidRecipeRequestException(
             InvalidRecipeRequestException invalidRecipeRequestException) {
-        logger.error("InvalidRecipeRequestException occurred {}", invalidRecipeRequestException.getMessage());
+        log.error("InvalidRecipeRequestException occurred {}", invalidRecipeRequestException.getMessage());
         ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(invalidRecipeRequestException.getLocalizedMessage())
@@ -39,7 +38,7 @@ public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandle
     @ExceptionHandler(RecipeNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleRecipeNotFoundException(
             RecipeNotFoundException recipeNotFoundException) {
-        logger.error("RecipeNotFoundException occurred {}", recipeNotFoundException.getMessage());
+        log.error("RecipeNotFoundException occurred {}", recipeNotFoundException.getMessage());
 
         ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
                 .status(HttpStatus.NOT_FOUND.value())
@@ -52,7 +51,7 @@ public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleInternalServerError(Exception exception, WebRequest webRequest) {
-        logger.error("Internal server error {}", exception.getMessage());
+        log.error("Internal server error {}", exception.getMessage());
         ErrorResponseDTO errorDetails = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
                 .error(webRequest.getDescription(false))
@@ -67,7 +66,7 @@ public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandle
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
-        logger.error("Validation exception {}", methodArgumentNotValidException.getMessage());
+        log.error("Validation exception {}", methodArgumentNotValidException.getMessage());
         Map<String, String> errors = new HashMap<>();
         methodArgumentNotValidException.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();

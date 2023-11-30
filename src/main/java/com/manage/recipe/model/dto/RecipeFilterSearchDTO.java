@@ -6,15 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class RecipeFilterSearchDTO {
-    private static final Logger logger = LoggerFactory.getLogger(RecipeFilterSearchDTO.class);
 
     private String name;
     private String foodCategory;
@@ -27,7 +26,7 @@ public class RecipeFilterSearchDTO {
         try {
             return foodCategory != null ? FoodCategory.valueOf(foodCategory.toUpperCase()) : null;
         } catch (IllegalArgumentException e) {
-            logger.error("Exception occured while returning food category {}", e.getMessage());
+            log.error("Exception occured while returning food category {}", e.getMessage());
         }
         return null;
     }

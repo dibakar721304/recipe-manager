@@ -7,8 +7,7 @@ import com.manage.recipe.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +24,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("recipes")
+@Slf4j
 @Validated
 public class RecipeController {
-    private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
+    // private static final Logger log = LoggerFactory.getLogger(RecipeController.class);
 
     @Value("${recipe.page.pageSize:10}")
     private int pageSize;
@@ -50,9 +50,9 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping
     public ResponseEntity<RecipeDTO> addNewRecipe(@Valid @RequestBody RecipeDTO recipeDTO) {
-        logger.debug("Add new recipe with name {}", recipeDTO.getName());
+        log.debug("Add new recipe with name {}", recipeDTO.getName());
         RecipeDTO responseRecipeDTO = recipeService.addNewRecipe(recipeDTO);
-        logger.debug("New recipe added with name {}", responseRecipeDTO.getName());
+        log.debug("New recipe added with name {}", responseRecipeDTO.getName());
         return new ResponseEntity<>(responseRecipeDTO, HttpStatus.CREATED);
     }
 
@@ -62,7 +62,7 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping
     public ResponseEntity<RecipeResponseDTO> fetchAllRecipes() {
-        logger.info("Request for fetching all  recipes");
+        log.info("Request for fetching all  recipes");
         RecipeResponseDTO allRecipes = recipeService.fetchAllRecipes();
         return new ResponseEntity<>(allRecipes, HttpStatus.OK);
     }
@@ -71,9 +71,9 @@ public class RecipeController {
     @ApiResponse(responseCode = "200", description = "Recipe fetched")
     @ApiResponse(responseCode = "404", description = "Recipe not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    @GetMapping(value = "/id/{recipeId}")
-    public ResponseEntity<RecipeDTO> fetchRecipe(@PathVariable Long recipeId) {
-        logger.debug("Request for fetching  recipe with id {}", recipeId);
+    @GetMapping(value = "/id")
+    public ResponseEntity<RecipeDTO> fetchRecipe(@RequestParam Long recipeId) {
+        log.debug("Request for fetching  recipe with id {}", recipeId);
         RecipeDTO recipe = recipeService.fetchRecipeById(recipeId);
         return new ResponseEntity<>(recipe, HttpStatus.OK);
     }
@@ -84,7 +84,7 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PutMapping(value = "/update/{recipeId}")
     public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long recipeId, @RequestBody RecipeDTO recipeDTO) {
-        logger.debug("Updating recipe with id {}", recipeId);
+        log.debug("Updating recipe with id {}", recipeId);
         RecipeDTO updatedRecipe = recipeService.updateRecipe(recipeId, recipeDTO);
         return new ResponseEntity<>(updatedRecipe, HttpStatus.OK);
     }
@@ -95,7 +95,7 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @DeleteMapping(value = "/delete/{recipeId}")
     public ResponseEntity<Void> removeRecipe(@PathVariable Long recipeId) {
-        logger.warn("Removing recipe with id {}", recipeId);
+        log.warn("Removing recipe with id {}", recipeId);
         recipeService.removeRecipe(recipeId);
         return ResponseEntity.noContent().build();
     }
@@ -107,7 +107,7 @@ public class RecipeController {
     @GetMapping("/search")
     public ResponseEntity<RecipeResponseDTO> searchRecipes(
             RecipeFilterSearchDTO recipeFilterSearchDTO, @RequestParam(required = false, defaultValue = "0") int page) {
-        logger.debug("Recipe search request {}", recipeFilterSearchDTO);
+        log.debug("Recipe search request {}", recipeFilterSearchDTO);
         Pageable pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(sortDirection), defaultSort);
         return new ResponseEntity<>(recipeService.searchRecipes(recipeFilterSearchDTO, pageable), HttpStatus.OK);
     }
