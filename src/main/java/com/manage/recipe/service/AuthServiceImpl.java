@@ -1,6 +1,8 @@
 package com.manage.recipe.service;
 
-import com.manage.recipe.model.dto.AuthRequestDto;
+import com.manage.recipe.model.dto.AuthRequestDTO;
+import com.manage.recipe.service.auth.AuthService;
+import com.manage.recipe.service.auth.JwtService;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +19,9 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     @Override
-    public Map<String, String> authRequest(AuthRequestDto authRequestDto) {
+    public Map<String, String> authRequest(AuthRequestDTO authRequestDTO) {
         final var authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequestDto.userName(), authRequestDto.password()));
+                new UsernamePasswordAuthenticationToken(authRequestDTO.userName(), authRequestDTO.password()));
         final var userDetails = (UserDetails) authenticate.getPrincipal();
         return getToken(userDetails);
     }

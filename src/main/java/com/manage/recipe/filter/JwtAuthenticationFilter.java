@@ -1,6 +1,6 @@
 package com.manage.recipe.filter;
 
-import com.manage.recipe.service.JwtService;
+import com.manage.recipe.service.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

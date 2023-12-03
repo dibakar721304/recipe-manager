@@ -1,4 +1,4 @@
-package com.manage.recipe.service;
+package com.manage.recipe.service.auth;
 
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetails;

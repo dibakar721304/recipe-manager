@@ -45,7 +45,7 @@ public class RecipeController {
     }
 
     @Operation(summary = "Add a new recipe")
-    @ApiResponse(responseCode = "202", description = "Recipe added")
+    @ApiResponse(responseCode = "201", description = "Recipe added")
     @ApiResponse(responseCode = "400", description = "Bad request")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping
@@ -71,8 +71,8 @@ public class RecipeController {
     @ApiResponse(responseCode = "200", description = "Recipe fetched")
     @ApiResponse(responseCode = "404", description = "Recipe not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    @GetMapping(value = "/id")
-    public ResponseEntity<RecipeDTO> fetchRecipe(@RequestParam Long recipeId) {
+    @GetMapping(value = "/id/{recipeId}")
+    public ResponseEntity<RecipeDTO> fetchRecipe(@PathVariable Long recipeId) {
         log.debug("Request for fetching  recipe with id {}", recipeId);
         RecipeDTO recipe = recipeService.fetchRecipeById(recipeId);
         return new ResponseEntity<>(recipe, HttpStatus.OK);

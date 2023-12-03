@@ -41,7 +41,7 @@ password: sa
 
 ## Model design
 
-RecipeDAO object is created with name, ingredients, food category, servings, search text. The food category is created as enum
+Recipe object is created with name, ingredients, food category, servings, search text. The food category is created as enum
 to increase compile-time checking and one extra type "UNKNOWN" is added for demo and testing. The requirement says to have
 search for "VEG" recipes. An enum is well suited for food type/category since these are pre-defined constants and will not be of many types
 As per design, it is easy to add other food categories quite easily.

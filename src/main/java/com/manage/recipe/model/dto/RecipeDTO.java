@@ -1,7 +1,7 @@
 package com.manage.recipe.model.dto;
 
 import com.manage.recipe.model.FoodCategory;
-import com.manage.recipe.model.dao.IngredientDAO;
+import com.manage.recipe.model.dao.Ingredient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -22,6 +22,6 @@ public class RecipeDTO {
     @Min(value = 1, message = "There should be at least 1 serving number")
     private int servings;
 
-    private List<IngredientDAO> ingredients;
+    private List<Ingredient> ingredients;
     private String instructions;
 }

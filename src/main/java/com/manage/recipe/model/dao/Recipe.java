@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "recipes")
-public class RecipeDAO {
+public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_id")
@@ -30,8 +30,8 @@ public class RecipeDAO {
     private int servings;
 
     @Column(name = "ingredients")
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<IngredientDAO> ingredients;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Ingredient> ingredients;
 
     @Column(name = "recipe_instructions")
     private String instructions;

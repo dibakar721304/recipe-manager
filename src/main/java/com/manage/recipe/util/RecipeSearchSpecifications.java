@@ -1,8 +1,8 @@
 package com.manage.recipe.util;
 
 import com.manage.recipe.model.FoodCategory;
-import com.manage.recipe.model.dao.IngredientDAO;
-import com.manage.recipe.model.dao.RecipeDAO;
+import com.manage.recipe.model.dao.Ingredient;
+import com.manage.recipe.model.dao.Recipe;
 import com.manage.recipe.model.dto.RecipeFilterSearchDTO;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -37,12 +37,12 @@ public class RecipeSearchSpecifications {
      * @param    name, example: VEG,UNKOWN
      * @return A specification object if found or else returns null
      */
-    public Specification<RecipeDAO> hasRecipeName(String name) {
-        return (recipeDAOroot, query, criteriaBuilder) -> {
+    public Specification<Recipe> hasRecipeName(String name) {
+        return (reciperoot, query, criteriaBuilder) -> {
             if (name == null) {
                 return null;
             }
-            return criteriaBuilder.equal(recipeDAOroot.get(NAME), name);
+            return criteriaBuilder.equal(reciperoot.get(NAME), name);
         };
     }
     /**
@@ -52,12 +52,12 @@ public class RecipeSearchSpecifications {
      * @param    foodCategory, example: VEG,UNKOWN
      * @return A specification object if found or else returns null
      */
-    public Specification<RecipeDAO> hasFoodCategory(FoodCategory foodCategory) {
-        return (recipeDAOroot, query, criteriaBuilder) -> {
+    public Specification<Recipe> hasFoodCategory(FoodCategory foodCategory) {
+        return (reciperoot, query, criteriaBuilder) -> {
             if (foodCategory == null) {
                 return null;
             }
-            return criteriaBuilder.equal(recipeDAOroot.get(FOOD_CATEGORY), foodCategory);
+            return criteriaBuilder.equal(reciperoot.get(FOOD_CATEGORY), foodCategory);
         };
     }
     /**
@@ -67,12 +67,12 @@ public class RecipeSearchSpecifications {
      * @param    servings , example 1,2,3
      * @return A specification object if found or else returns null
      */
-    public Specification<RecipeDAO> hasServings(Integer servings) {
-        return (recipeDAOroot, query, criteriaBuilder) -> {
+    public Specification<Recipe> hasServings(Integer servings) {
+        return (reciperoot, query, criteriaBuilder) -> {
             if (servings == null) {
                 return null;
             }
-            return criteriaBuilder.equal(recipeDAOroot.get(SERVINGS_NUMBER), servings);
+            return criteriaBuilder.equal(reciperoot.get(SERVINGS_NUMBER), servings);
         };
     }
     /**
@@ -82,12 +82,12 @@ public class RecipeSearchSpecifications {
      * @param    includeIngredients of type List<String>, example ["salt","sugar"]
      * @return A specification object if found or else returns null
      */
-    public Specification<RecipeDAO> hasIncludeIngredients(List<String> includeIngredients) {
-        return (recipeDAOroot, query, criteriaBuilder) -> {
+    public Specification<Recipe> hasIncludeIngredients(List<String> includeIngredients) {
+        return (reciperoot, query, criteriaBuilder) -> {
             if (includeIngredients == null || includeIngredients.isEmpty()) {
                 return null;
             }
-            return recipeDAOroot.joinList(INGREDIENTS).get(INGREDIENT_NAME).in(includeIngredients);
+            return reciperoot.joinList(INGREDIENTS).get(INGREDIENT_NAME).in(includeIngredients);
         };
     }
     /**
@@ -98,20 +98,19 @@ public class RecipeSearchSpecifications {
      * @param    excludeIngredients of type List<String>, example ["salt","sugar"]
      * @return A specification object if found or else returns null
      */
-    public Specification<RecipeDAO> hasExcludeIngredients(List<String> excludeIngredients) {
-        return (recipeDAOroot, query, criteriaBuilder) -> {
+    public Specification<Recipe> hasExcludeIngredients(List<String> excludeIngredients) {
+        return (reciperoot, query, criteriaBuilder) -> {
             if (excludeIngredients == null || excludeIngredients.isEmpty()) {
                 return null;
             }
             Subquery<Long> subqueryExcludedIngredients = query.subquery(Long.class);
-            Root<RecipeDAO> subqueryRecipe = subqueryExcludedIngredients.from(RecipeDAO.class);
-            Join<RecipeDAO, IngredientDAO> subqueryJoinIngredients =
-                    subqueryRecipe.joinList(INGREDIENTS, JoinType.INNER);
+            Root<Recipe> subqueryRecipe = subqueryExcludedIngredients.from(Recipe.class);
+            Join<Recipe, Ingredient> subqueryJoinIngredients = subqueryRecipe.joinList(INGREDIENTS, JoinType.INNER);
             subqueryExcludedIngredients
                     .select(subqueryRecipe.get(RECIPE_ID))
                     .where(subqueryJoinIngredients.get(INGREDIENT_NAME).in(excludeIngredients));
 
-            return criteriaBuilder.not(recipeDAOroot.get(RECIPE_ID).in(subqueryExcludedIngredients));
+            return criteriaBuilder.not(reciperoot.get(RECIPE_ID).in(subqueryExcludedIngredients));
         };
     }
     /**
@@ -121,13 +120,13 @@ public class RecipeSearchSpecifications {
      * @param    searchText of type String , example: "ovan","stir"
      * @return A specification object if found or else returns null
      */
-    public Specification<RecipeDAO> hasSearchText(String searchText) {
-        return (recipeDAOroot, query, criteriaBuilder) -> {
+    public Specification<Recipe> hasSearchText(String searchText) {
+        return (reciperoot, query, criteriaBuilder) -> {
             if (searchText == null || searchText.trim().isEmpty()) {
                 return null;
             }
             return criteriaBuilder.like(
-                    criteriaBuilder.lower(recipeDAOroot.get(INSTRUCTIONS)), "%" + searchText.toLowerCase() + "%");
+                    criteriaBuilder.lower(reciperoot.get(INSTRUCTIONS)), "%" + searchText.toLowerCase() + "%");
         };
     }
     /**
@@ -138,7 +137,7 @@ public class RecipeSearchSpecifications {
      * @param    recipeFilterSearchDTO of type RecipeFilterSearchDTO . Here one or more search fields can be present.
      * @return A specification object
      */
-    public Specification<RecipeDAO> getRecipeSearchSpecification(RecipeFilterSearchDTO recipeFilterSearchDTO) {
+    public Specification<Recipe> getRecipeSearchSpecification(RecipeFilterSearchDTO recipeFilterSearchDTO) {
         logger.debug("Search has been initiated with request {}", recipeFilterSearchDTO);
         return Specification.where(hasRecipeName(recipeFilterSearchDTO.getName()))
                 .and(hasFoodCategory(recipeFilterSearchDTO.getFoodCategoryEnum()))

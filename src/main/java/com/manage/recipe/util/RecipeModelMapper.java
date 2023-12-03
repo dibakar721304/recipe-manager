@@ -1,6 +1,6 @@
 package com.manage.recipe.util;
 
-import com.manage.recipe.model.dao.RecipeDAO;
+import com.manage.recipe.model.dao.Recipe;
 import com.manage.recipe.model.dto.RecipeDTO;
 import com.manage.recipe.model.dto.RecipeResponseDTO;
 import java.util.List;
@@ -16,19 +16,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class RecipeModelMapper {
 
-    public RecipeDTO mapToRecipeDTO(RecipeDAO recipeDAO) {
+    public RecipeDTO mapToRecipeDTO(Recipe recipe) {
         return RecipeDTO.builder()
-                .recipeId(recipeDAO.getId())
-                .name(recipeDAO.getName())
-                .instructions(recipeDAO.getInstructions())
-                .ingredients(recipeDAO.getIngredients())
-                .foodCategory(recipeDAO.getFoodCategory())
-                .servings(recipeDAO.getServings())
+                .recipeId(recipe.getId())
+                .name(recipe.getName())
+                .instructions(recipe.getInstructions())
+                .ingredients(recipe.getIngredients())
+                .foodCategory(recipe.getFoodCategory())
+                .servings(recipe.getServings())
                 .build();
     }
 
-    public RecipeDAO mapToRecipeDAO(RecipeDTO recipeDTO) {
-        return RecipeDAO.builder()
+    public Recipe mapToRecipe(RecipeDTO recipeDTO) {
+        return Recipe.builder()
                 .name(recipeDTO.getName())
                 .instructions(recipeDTO.getInstructions())
                 .ingredients(recipeDTO.getIngredients())
@@ -37,19 +37,19 @@ public class RecipeModelMapper {
                 .build();
     }
 
-    public RecipeResponseDTO mapToRecipeDTOlist(List<RecipeDAO> recipeDAOList) {
+    public RecipeResponseDTO mapToRecipeDTOlist(List<Recipe> recipeList) {
         return RecipeResponseDTO.builder()
-                .recipeDTOList(recipeDAOList.stream().map(this::mapToRecipeDTO).collect(Collectors.toList()))
+                .recipeDTOList(recipeList.stream().map(this::mapToRecipeDTO).collect(Collectors.toList()))
                 .status(HttpStatus.OK.value())
                 .build();
     }
 
-    public RecipeDAO updatedRecipe(RecipeDAO recipeDAO, RecipeDTO recipeDTO) {
-        recipeDAO.setName(recipeDTO.getName());
-        recipeDAO.setIngredients(recipeDTO.getIngredients());
-        recipeDAO.setServings(recipeDTO.getServings());
-        recipeDAO.setInstructions(recipeDTO.getInstructions());
-        recipeDAO.setFoodCategory(recipeDTO.getFoodCategory());
-        return recipeDAO;
+    public Recipe updatedRecipe(Recipe recipe, RecipeDTO recipeDTO) {
+        recipe.setName(recipeDTO.getName());
+        recipe.setIngredients(recipeDTO.getIngredients());
+        recipe.setServings(recipeDTO.getServings());
+        recipe.setInstructions(recipeDTO.getInstructions());
+        recipe.setFoodCategory(recipeDTO.getFoodCategory());
+        return recipe;
     }
 }

@@ -6,6 +6,7 @@ import com.manage.recipe.model.dto.ErrorResponseDTO;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandle
         log.error("InvalidRecipeRequestException occurred {}", invalidRecipeRequestException.getMessage());
         ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
+                .trace_id(UUID.randomUUID().toString())
                 .error(invalidRecipeRequestException.getLocalizedMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -42,6 +44,7 @@ public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandle
 
         ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
                 .status(HttpStatus.NOT_FOUND.value())
+                .trace_id(UUID.randomUUID().toString())
                 .error(recipeNotFoundException.getLocalizedMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -54,6 +57,7 @@ public class RecipeManagerExceptionHandler extends ResponseEntityExceptionHandle
         log.error("Internal server error {}", exception.getMessage());
         ErrorResponseDTO errorDetails = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
+                .trace_id(UUID.randomUUID().toString())
                 .error(webRequest.getDescription(false))
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .build();

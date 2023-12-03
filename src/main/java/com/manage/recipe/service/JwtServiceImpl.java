@@ -1,5 +1,6 @@
 package com.manage.recipe.service;
 
+import com.manage.recipe.service.auth.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,7 +28,7 @@ public class JwtServiceImpl implements JwtService {
                 .addClaims(extraClaims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 2000 * 60 * 5))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
