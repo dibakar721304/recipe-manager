@@ -10,7 +10,7 @@ The recipe-manager service handles the management of recipes. The end points of 
 # Tech stack
 
 1) Java 17.0
-2) Spring boot 3.1.0
+2) Spring boot 3.1.2
 3) Lombok
 4) spotify  2.36.0
 5) H2 database 2.1.214
@@ -35,7 +35,7 @@ The database is created at the start of application. In memory database is used 
 with below url:
 http://localhost:8080/h2-console/login.jsp
 
-database name: testRecipeManagerDB
+database url: jdbc:h2:file:./recipeManagerDB
 username : sa
 password: sa
 
@@ -68,27 +68,62 @@ over the input and output fields.
 
 The cicd file is created using github action. This file is responsible for building creating, and pushing docker image
 to docker hub. At present, this is only done for master branch.
+It does maven build , docker build and push.
 
 # Reference/Guides
 
-1) To format the application:  mvn spotless::apply
+### To format the application:
 
-2) To clean build : mvn clean install
-3) To run application : mvn spring-boot:run
-4) To Swagger ui: http://localhost:8080/swagger-ui/index.html
-5) For docker :
+        mvn spotless::apply
+
+### To clean build :
+
+        mvn clean install
+
+### To run application :
+
+        mvn spring-boot:run
+
+### To run with profile:
+
+for prod:
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
+for dev :
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+### To Swagger ui: http://localhost:8080/swagger-ui/index.html
+
+### For docker
+
 local build :
 docker build -t dibakar721304/recipe-manager:v1.0 .
 push:
 docker push dibakar721304/recipe-manager:v1.0
 To pull from docker hub : docker pull dibakar721304/recipe-manager:v1.0
 To running docker image:  docker run -p 8080:8080 dibakar721304/recipe-manager:v1.0
-6) The high level design is in ..recipe-manager/design-uml-diagrams/High-level-design.jpg
+
+### The high level design is in ..recipe-manager/design-uml-diagrams/High-level-design.jpg
 
 # End points usage:
 
 via postman:
-1) POST http://localhost:8080/recipes
+
+## Login API :
+
+POST http://localhost:8080/auth/login
+request body:
+{
+"userName": "admin",
+"password":"admin"
+}
+Copy the token value from response. Example response:
+{
+"token": "xxx.xxx.xxx"
+}
+To execute below mentioned apis, select Bearer token option from Authorization tab and
+paste the token value in token field on the right. Now we can execute below apis with token authorization:
+
+### POST http://localhost:8080/recipes
 
 Request body:
 
@@ -107,9 +142,10 @@ Request body:
 "instructions":"Test instruction for  recipe"
 }
 
-2) GET http://localhost:8080/recipes
+### GET http://localhost:8080/recipes
 
-3) PUT http://localhost:8080/recipes/update/1
+### PUT http://localhost:8080/recipes/update/1
+
 Request body:
 {
 "name":"updatedRecipe",
@@ -125,8 +161,10 @@ Request body:
 }],
 "instructions":"updated instruction for recipe5"
 }
-4) GET http://localhost:8080/recipes/id/1
 
-5) DELETE http://localhost:8080/recipes/delete/1
+### GET http://localhost:8080/recipes/id/1
 
-6) GET http://localhost:8080/recipes/search?foodCategory=VEG&servings=4&includedIngredients=pepper&excludedIngredients=pepper&searchTextInInstructions=stir&name=testRecipe
+### DELETE http://localhost:8080/recipes/delete/1
+
+### GET http://localhost:8080/recipes/search?foodCategory=VEG&servings=4&includedIngredients=pepper&excludedIngredients=pepper&searchTextInInstructions=stir&name=testRecipe
+

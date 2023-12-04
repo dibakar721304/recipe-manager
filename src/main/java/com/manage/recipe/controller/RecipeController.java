@@ -50,9 +50,9 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping
     public ResponseEntity<RecipeDTO> addNewRecipe(@Valid @RequestBody RecipeDTO recipeDTO) {
-        log.debug("Add new recipe with name {}", recipeDTO.getName());
+        log.info("Add new recipe with name {}", recipeDTO.getName());
         RecipeDTO responseRecipeDTO = recipeService.addNewRecipe(recipeDTO);
-        log.debug("New recipe added with name {}", responseRecipeDTO.getName());
+        log.debug("New recipe added {}", responseRecipeDTO);
         return new ResponseEntity<>(responseRecipeDTO, HttpStatus.CREATED);
     }
 
@@ -73,9 +73,10 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping(value = "/id/{recipeId}")
     public ResponseEntity<RecipeDTO> fetchRecipe(@PathVariable Long recipeId) {
-        log.debug("Request for fetching  recipe with id {}", recipeId);
-        RecipeDTO recipe = recipeService.fetchRecipeById(recipeId);
-        return new ResponseEntity<>(recipe, HttpStatus.OK);
+        log.info("Request for fetching  recipe with id {}", recipeId);
+        RecipeDTO recipeDTO = recipeService.fetchRecipeById(recipeId);
+        log.debug("Recipe fetched {}", recipeDTO);
+        return new ResponseEntity<>(recipeDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Update recipe")
@@ -84,8 +85,9 @@ public class RecipeController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PutMapping(value = "/update/{recipeId}")
     public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long recipeId, @RequestBody RecipeDTO recipeDTO) {
-        log.debug("Updating recipe with id {}", recipeId);
+        log.info("Updating recipe with id {}", recipeId);
         RecipeDTO updatedRecipe = recipeService.updateRecipe(recipeId, recipeDTO);
+        log.debug("Updated recipe {}", updatedRecipe);
         return new ResponseEntity<>(updatedRecipe, HttpStatus.OK);
     }
 
