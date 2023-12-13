@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 public class RecipeController {
-    // private static final Logger log = LoggerFactory.getLogger(RecipeController.class);
 
     @Value("${recipe.page.pageSize:10}")
     private int pageSize;
@@ -58,7 +57,6 @@ public class RecipeController {
 
     @Operation(summary = "Fetch all recipes")
     @ApiResponse(responseCode = "200", description = "Recipes fetched")
-    @ApiResponse(responseCode = "404", description = "Recipes not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping
     public ResponseEntity<RecipeResponseDTO> fetchAllRecipes() {

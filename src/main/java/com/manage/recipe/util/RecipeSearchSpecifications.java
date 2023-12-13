@@ -39,7 +39,7 @@ public class RecipeSearchSpecifications {
      */
     public Specification<Recipe> hasRecipeName(String name) {
         return (reciperoot, query, criteriaBuilder) -> {
-            if (name == null) {
+            if (null == name) {
                 return null;
             }
             return criteriaBuilder.equal(reciperoot.get(NAME), name);
@@ -54,7 +54,7 @@ public class RecipeSearchSpecifications {
      */
     public Specification<Recipe> hasFoodCategory(FoodCategory foodCategory) {
         return (reciperoot, query, criteriaBuilder) -> {
-            if (foodCategory == null) {
+            if (null == foodCategory) {
                 return null;
             }
             return criteriaBuilder.equal(reciperoot.get(FOOD_CATEGORY), foodCategory);
@@ -69,7 +69,7 @@ public class RecipeSearchSpecifications {
      */
     public Specification<Recipe> hasServings(Integer servings) {
         return (reciperoot, query, criteriaBuilder) -> {
-            if (servings == null) {
+            if (null == servings) {
                 return null;
             }
             return criteriaBuilder.equal(reciperoot.get(SERVINGS_NUMBER), servings);
@@ -84,7 +84,7 @@ public class RecipeSearchSpecifications {
      */
     public Specification<Recipe> hasIncludeIngredients(List<String> includeIngredients) {
         return (reciperoot, query, criteriaBuilder) -> {
-            if (includeIngredients == null || includeIngredients.isEmpty()) {
+            if (null == includeIngredients || includeIngredients.isEmpty()) {
                 return null;
             }
             return reciperoot.joinList(INGREDIENTS).get(INGREDIENT_NAME).in(includeIngredients);
@@ -100,7 +100,7 @@ public class RecipeSearchSpecifications {
      */
     public Specification<Recipe> hasExcludeIngredients(List<String> excludeIngredients) {
         return (reciperoot, query, criteriaBuilder) -> {
-            if (excludeIngredients == null || excludeIngredients.isEmpty()) {
+            if (null == excludeIngredients || excludeIngredients.isEmpty()) {
                 return null;
             }
             Subquery<Long> subqueryExcludedIngredients = query.subquery(Long.class);
@@ -122,7 +122,7 @@ public class RecipeSearchSpecifications {
      */
     public Specification<Recipe> hasSearchText(String searchText) {
         return (reciperoot, query, criteriaBuilder) -> {
-            if (searchText == null || searchText.trim().isEmpty()) {
+            if (null == searchText || searchText.trim().isEmpty()) {
                 return null;
             }
             return criteriaBuilder.like(
