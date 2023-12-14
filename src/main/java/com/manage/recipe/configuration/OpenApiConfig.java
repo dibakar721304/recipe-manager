@@ -11,13 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-// @SecurityScheme(
-//        name = "in-memory",
-//        type = SecuritySchemeType.APIKEY,
-//        bearerFormat = "JWT",
-//        scheme = "Bearer",
-//        paramName = "Authorization",
-//        in = SecuritySchemeIn.HEADER)
 public class OpenApiConfig {
 
     @Bean
