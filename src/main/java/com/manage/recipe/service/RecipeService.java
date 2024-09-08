@@ -123,7 +123,7 @@ public class RecipeService {
      * @return RecipeResponseDTO object
      */
     public RecipeResponseDTO searchRecipes(RecipeFilterSearchDTO filterDTO, Pageable pageable) {
-        log.info("Search request initiated for recipe");
+        log.info("Search request initiated for recipe1");
         Specification<Recipe> searchSpecification = recipeSearchSpecifications.getRecipeSearchSpecification(filterDTO);
         Page<Recipe> page = recipeRepository.findAll(searchSpecification, pageable);
         return recipeModelMapper.mapToRecipeDTOlist(page.getContent());
